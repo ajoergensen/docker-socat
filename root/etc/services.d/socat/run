@@ -1,0 +1,16 @@
+#!/usr/bin/with-contenv bash
+
+: ${PROTO:="TCP"}
+: ${LOCAL_PORT:=5000}
+: ${TARGET:="localhost"}
+: ${TARGET_PORT:=5001}
+
+if [[ $LOCAL_PORT -le 1024 ]]
+ then
+        RUNAS="root"
+ else
+        RUNAS="app"
+fi
+
+exec s6-setuidgid ${RUNAS} socat ${PROTO}-LISTEN:${LOCAL_PORT},fork,reuseaddr ${PROTO}:${TARGET}:${TARGET_PORT}
+
